@@ -13,6 +13,7 @@ This runbook is designed to be followed interactively with **Bob** (IBM's AI cod
 3. [View Current Users, Roles & Library Access](#3-view-current-users-roles--library-access)
 4. [Create a User Profile with Separation of Duty](#4-create-a-user-profile-with-separation-of-duty)
 5. [Demonstrate the Difference Between Library Access](#5-demonstrate-the-difference-between-library-access)
+6. [Publishing to the Bob CE Marketplace](#6-publishing-to-the-bob-ce-marketplace)
 - [Appendix A — Useful Commands Quick Reference](#appendix-a--useful-commands-quick-reference)
 - [Appendix B — SQL Catalog Views for Security Reporting](#appendix-b--sql-catalog-views-for-security-reporting)
 
@@ -983,9 +984,199 @@ GRPAPPROVER cannot access AUDITLIB. Show me the full authority matrix."
 
 ---
 
+## 6. Publishing to the Bob CE Marketplace
+
+Anyone who wants to contribute Skills, Modes, Rules, Labs, or Guides to the **Bob CE Marketplace** must follow the process below. The Marketplace sources assets from a set of geographic repositories — your content must land in one of them (or in your own conformant repository) before it appears to users.
+
+---
+
+### 6.1 Overview
+
+| Step | Action |
+|------|--------|
+| 1 | Fork / clone the CE Bob repository |
+| 2 | Add your assets under the correct section folder |
+| 3 | Ensure each asset has a `README.md` |
+| 4 | Sync your clone and open a Pull Request |
+| 5 | Automated AI review — approve, comment, or reject |
+| 6 | (Optional) Register an additional repository if you have 40+ assets |
+
+---
+
+### 6.2 Step-by-Step Process
+
+#### Step 1 — Clone the CE Bob Repository
+
+Clone the upstream CE Bob repository to your local machine:
+
+```bash
+git clone https://github.ibm.com/ClientEngineering/bob
+cd bob
+```
+
+> **Note:** You need an IBM GitHub (github.ibm.com) account with appropriate access. Contact your CE lead if you do not have access.
+
+---
+
+#### Step 2 — Add Your Assets Under the Correct Section
+
+Inside your local clone, navigate to the relevant section folder and add your content:
+
+| Asset Type | Folder |
+|------------|--------|
+| Skills | `SKILLS/` |
+| Modes | `MODES/` |
+| Rules | `RULES/` |
+| Labs | `LABS/` |
+| Guides | `GUIDES/` |
+
+**Before adding any asset:**
+
+- [ ] Verify your asset **name** does not conflict with any existing asset in that section
+- [ ] Verify your asset **content** does not overlap with existing assets
+- [ ] Review the [Marketplace contract](https://github.ibm.com/ClientEngineering/bob/tree/main/marketplace-contract) for the required folder structure and naming conventions
+
+```bash
+# Example: adding a new Skill
+ls SKILLS/                       # check existing skills first
+cp -r my-new-skill/ SKILLS/      # add your skill folder
+```
+
+> ⚠️ **Overlap check is mandatory.** The automated PR review will flag duplicate names or substantially overlapping content, which will cause the PR to be rejected.
+
+---
+
+#### Step 3 — Add a `README.md` to Every Asset
+
+Every **Skill**, **Lab**, and **Guide** asset you add **must** include a minimal `README.md` file at the root of its folder. The Marketplace reads this file to display information to users.
+
+Required `README.md` sections:
+
+```markdown
+# Asset Name
+
+## Description
+A short description of what this asset does.
+
+## Usage
+How to use this asset with Bob.
+
+## Prerequisites
+Any prerequisites (e.g. IBM i 7.4+, specific authority level).
+
+## Author
+Your name / team name.
+```
+
+> The Marketplace will not surface assets without a valid `README.md`. Missing documentation is one of the most common reasons for PR rejection.
+
+---
+
+#### Step 4 — Sync Your Clone and Open a Pull Request
+
+Before opening a PR, sync your fork with the upstream main branch to avoid merge conflicts:
+
+```bash
+# Add upstream remote if not already set
+git remote add upstream https://github.ibm.com/ClientEngineering/bob
+
+# Fetch and rebase on upstream main
+git fetch upstream
+git rebase upstream/main
+
+# Push your branch and open the PR
+git push origin my-asset-branch
+```
+
+Then open a **Pull Request** in the upstream CE Bob Marketplace repository (`ClientEngineering/bob`) targeting the `main` branch.
+
+**PR checklist before submitting:**
+
+- [ ] Asset is placed under the correct section folder (`SKILLS/`, `MODES/`, `RULES/`, etc.)
+- [ ] Asset name does not conflict with existing assets
+- [ ] Asset content does not duplicate existing assets
+- [ ] Every Skill, Lab, and Guide has a `README.md`
+- [ ] Your branch is synced with upstream `main`
+- [ ] PR title and description clearly describe what you are adding
+
+---
+
+#### Step 5 — Automated AI PR Review
+
+The PR review process is **automated with AI Agents**. The review checks:
+
+- Consistency and quality of the asset content
+- Naming conflicts with existing assets
+- Presence and completeness of `README.md` files
+- Conformance with the [Marketplace contract](https://github.ibm.com/ClientEngineering/bob/tree/main/marketplace-contract)
+
+The AI Agent will **approve**, **comment**, or **reject** the PR based on its findings. Manual human intervention can override the automated decision if needed.
+
+| Outcome | Meaning | Action Required |
+|---------|---------|-----------------|
+| ✅ **Approved** | Asset passed all automated checks | None — your asset is merged and will appear in the Marketplace |
+| 💬 **Commented** | Checks passed with notes, or minor issues found | Address the feedback and push an updated commit to the same PR branch |
+| ❌ **Rejected** | Asset failed quality, overlap, or contract checks | Review the rejection reason, fix the issues, and re-open or update the PR |
+
+> **Human override:** A Marketplace maintainer can manually approve, comment, or close any PR regardless of the AI Agent's decision. If you believe a rejection is incorrect, contact the CE Bob Marketplace team for a manual review.
+
+---
+
+#### Step 6 — Large Contributor: Register an Additional Repository (Optional)
+
+The CE Bob Marketplace currently sources assets from **4 geographic repositories** (one per Geo). If you have **40–50 or more assets** and want to maintain your own repository, the Marketplace supports additional repositories — provided they conform to the same structure defined in the Marketplace contract.
+
+**4 Geo repositories (current):**
+
+| Geo | Description |
+|-----|-------------|
+| Americas | North America, Latin America |
+| EMEA | Europe, Middle East, Africa |
+| AP | Asia Pacific |
+| Japan | Japan |
+
+**Requirements for an additional repository:**
+
+- Must follow the exact folder structure defined in the [Marketplace contract](https://github.ibm.com/ClientEngineering/bob/tree/main/marketplace-contract)
+- Must be accessible to the Marketplace indexer
+- Contact the CE Bob Marketplace team to register your repository as an additional source
+
+> For smaller contributions (fewer than 40–50 assets), always contribute via the standard PR process into one of the existing Geo repositories rather than registering a new one.
+
+---
+
+### 6.3 Marketplace Repository Structure Summary
+
+```
+bob/
+├── SKILLS/
+│   └── my-skill/
+│       ├── README.md          ← required
+│       └── SKILL.md
+├── MODES/
+│   └── my-mode/
+│       ├── README.md          ← required
+│       └── mode-config.yaml
+├── RULES/
+│   └── my-rules/
+│       └── rules.md
+├── LABS/
+│   └── my-lab/
+│       ├── README.md          ← required
+│       └── lab-content.md
+└── GUIDES/
+    └── my-guide/
+        ├── README.md          ← required
+        └── guide.md
+```
+
+Refer to the full [Marketplace contract](https://github.ibm.com/ClientEngineering/bob/tree/main/marketplace-contract) for the authoritative specification.
+
+---
+
 ## Document Information
 
-- **Version:** 1.0
+- **Version:** 1.1
 - **Platform:** IBM i (OS/400) — tested on IBM i 7.4 and 7.5
 - **Tool:** IBM Bob AI Assistant
 - **Authority required:** `*SECADM` or `*ALLOBJ` for most administrative commands
